@@ -10,5 +10,7 @@ target_include_directories(rtsan::rtsan_standalone INTERFACE ${CMAKE_CURRENT_SOU
 target_compile_options(rtsan::rtsan_standalone INTERFACE -fsanitize=realtime)
 target_link_options(rtsan::rtsan_standalone INTERFACE -fsanitize=realtime)
 
-add_executable(rtsan_demo rtsan_demo.cc)
-target_link_libraries(rtsan_demo PRIVATE rtsan::rtsan_standalone)
+if(PROJECT_IS_TOP_LEVEL)
+    add_executable(rtsan_demo rtsan_demo.cc)
+    target_link_libraries(rtsan_demo PRIVATE rtsan::rtsan_standalone)
+endif()
