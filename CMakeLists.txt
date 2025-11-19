@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(rtsan_standalone VERSION 1.0.0 LANGUAGES CXX)
 
-add_library(rtsan::rtsan_standalone STATIC IMPORTED)
+add_library(rtsan::rtsan_standalone STATIC IMPORTED GLOBAL)
 set_target_properties(rtsan::rtsan_standalone PROPERTIES
     IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/linux-x86_64/libclang_rt.rtsan.a
 )
