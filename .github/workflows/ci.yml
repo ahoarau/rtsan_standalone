@@ -99,7 +99,8 @@ jobs:
             - run: cmake --build build
             - name: Run rtsan_demo and capture output
               shell: bash
-              run: set +e
+              run: |
+                  set +e
                   ./build/Debug/rtsan_demo.exe > output.txt 2>&1
                   EXIT_CODE=$?
                   cat output.txt
