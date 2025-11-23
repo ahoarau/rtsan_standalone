@@ -1,9 +1,12 @@
+#include <rtsan_standalone/rtsan.hh>
 #include <vector>
 
-int process() [[clang::nonblocking]] {
+int process() {
   auto vec = std::vector<int>(3);
   vec.push_back(42);
   return 0;
 }
 
-auto main() -> int { return process(); }
+int main() { 
+  rtsan::ScopedRealtimeSanitizer srs;
+  return process(); }
