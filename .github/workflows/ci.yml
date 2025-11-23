@@ -41,7 +41,7 @@ jobs:
             - name: Install Linux ARM64 Toolchain
               run: |
                   sudo apt-get update
-                  sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+                  sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu qemu-utils qemu-efi-aarch64 qemu-system-arm
 
             - run: cmake -B build -DCMAKE_SYSTEM_PROCESSOR=aarch64 -DCMAKE_C_COMPILER_TARGET=aarch64-linux-gnu -DCMAKE_CXX_COMPILER_TARGET=aarch64-linux-gnu
             - run: cmake --build build
