@@ -1,12 +1,16 @@
-#include <rtsan_standalone/rtsan.hh>
+#include <rtsan_standalone/rtsan_standalone.h>
 #include <vector>
 
-int process() {
-  auto vec = std::vector<int>(3);
-  vec.push_back(42);
-  return 0;
+int process()
+{
+    __rtsan::ScopedSanitizeRealtime srs;
+    auto vec = std::vector<int>(3);
+    vec.push_back(42);
+    return 0;
 }
 
-int main() { 
-  rtsan::ScopedRealtimeSanitizer srs;
-  return process(); }
+int main()
+{
+    __rtsan::Initialize();
+    return process();
+}
