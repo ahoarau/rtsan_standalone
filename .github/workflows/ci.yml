@@ -19,18 +19,19 @@ jobs:
             - uses: actions/checkout@v4
             - run: cmake -B build
             - run: cmake --build build
-            - run: |
-                set +e
-                ./build/rtsan_demo > output.txt 2>&1
-                EXIT_CODE=$?
-                cat output.txt
-                if [ $EXIT_CODE -ne 0 ]; then
-                  CONTENT=$(cat output.txt)
-                  CONTENT="${CONTENT//'%'/'%25'}"
-                  CONTENT="${CONTENT//$'\n'/'%0A'}"
-                  CONTENT="${CONTENT//$'\r'/'%0D'}"
-                  echo "::warning::$CONTENT"
-                fi
+            - name: Run rtsan_demo and capture output
+              run: |
+                  set +e
+                  ./build/rtsan_demo > output.txt 2>&1
+                  EXIT_CODE=$?
+                  cat output.txt
+                  if [ $EXIT_CODE -ne 0 ]; then
+                    CONTENT=$(cat output.txt)
+                    CONTENT="${CONTENT//'%'/'%25'}"
+                    CONTENT="${CONTENT//$'\n'/'%0A'}"
+                    CONTENT="${CONTENT//$'\r'/'%0D'}"
+                    echo "::warning::$CONTENT"
+                  fi
 
     linux_cross_compile:
         name: Linux x64 -> ARM64 (Cross)
@@ -45,18 +46,19 @@ jobs:
 
             - run: cmake -B build -DCMAKE_SYSTEM_PROCESSOR=aarch64 -DCMAKE_C_COMPILER_TARGET=aarch64-linux-gnu -DCMAKE_CXX_COMPILER_TARGET=aarch64-linux-gnu
             - run: cmake --build build
-            - run: |
-                set +e
-                qemu-aarch64 ./build/rtsan_demo > output.txt 2>&1
-                EXIT_CODE=$?
-                cat output.txt
-                if [ $EXIT_CODE -ne 0 ]; then
-                  CONTENT=$(cat output.txt)
-                  CONTENT="${CONTENT//'%'/'%25'}"
-                  CONTENT="${CONTENT//$'\n'/'%0A'}"
-                  CONTENT="${CONTENT//$'\r'/'%0D'}"
-                  echo "::warning::$CONTENT"
-                fi
+            - name: Run rtsan_demo and capture output
+              run: |
+                  set +e
+                  qemu-aarch64 ./build/rtsan_demo > output.txt 2>&1
+                  EXIT_CODE=$?
+                  cat output.txt
+                  if [ $EXIT_CODE -ne 0 ]; then
+                    CONTENT=$(cat output.txt)
+                    CONTENT="${CONTENT//'%'/'%25'}"
+                    CONTENT="${CONTENT//$'\n'/'%0A'}"
+                    CONTENT="${CONTENT//$'\r'/'%0D'}"
+                    echo "::warning::$CONTENT"
+                  fi
 
     macos:
         name: ${{ matrix.name }}
@@ -74,18 +76,19 @@ jobs:
             - uses: actions/checkout@v4
             - run: cmake -B build
             - run: cmake --build build
-            - run: |
-                set +e
-                ./build/rtsan_demo > output.txt 2>&1
-                EXIT_CODE=$?
-                cat output.txt
-                if [ $EXIT_CODE -ne 0 ]; then
-                  CONTENT=$(cat output.txt)
-                  CONTENT="${CONTENT//'%'/'%25'}"
-                  CONTENT="${CONTENT//$'\n'/'%0A'}"
-                  CONTENT="${CONTENT//$'\r'/'%0D'}"
-                  echo "::warning::$CONTENT"
-                fi
+            - name: Run rtsan_demo and capture output
+              run: |
+                  set +e
+                  ./build/rtsan_demo > output.txt 2>&1
+                  EXIT_CODE=$?
+                  cat output.txt
+                  if [ $EXIT_CODE -ne 0 ]; then
+                    CONTENT=$(cat output.txt)
+                    CONTENT="${CONTENT//'%'/'%25'}"
+                    CONTENT="${CONTENT//$'\n'/'%0A'}"
+                    CONTENT="${CONTENT//$'\r'/'%0D'}"
+                    echo "::warning::$CONTENT"
+                  fi
 
     windows_x64:
         name: Windows x64
@@ -94,19 +97,19 @@ jobs:
             - uses: actions/checkout@v4
             - run: cmake -B build
             - run: cmake --build build
-            - shell: bash
-              run: |
-                set +e
-                ./build/Debug/rtsan_demo.exe > output.txt 2>&1
-                EXIT_CODE=$?
-                cat output.txt
-                if [ $EXIT_CODE -ne 0 ]; then
+            - name: Run rtsan_demo and capture output
+              shell: bash
+              run: set +e
+                  ./build/Debug/rtsan_demo.exe > output.txt 2>&1
+                  EXIT_CODE=$?
+                  cat output.txt
+                  if [ $EXIT_CODE -ne 0 ]; then
                   CONTENT=$(cat output.txt)
                   CONTENT="${CONTENT//'%'/'%25'}"
                   CONTENT="${CONTENT//$'\n'/'%0A'}"
                   CONTENT="${CONTENT//$'\r'/'%0D'}"
                   echo "::warning::$CONTENT"
-                fi
+                  fi
     windows_arm64:
         name: Windows ARM64
         runs-on: windows-11-arm
@@ -114,16 +117,17 @@ jobs:
             - uses: actions/checkout@v4
             - run: cmake -B build
             - run: cmake --build build
-            - shell: bash
+            - name: Run rtsan_demo and capture output
+              shell: bash
               run: |
-                set +e
-                ./build/Debug/rtsan_demo.exe > output.txt 2>&1
-                EXIT_CODE=$?
-                cat output.txt
-                if [ $EXIT_CODE -ne 0 ]; then
-                  CONTENT=$(cat output.txt)
-                  CONTENT="${CONTENT//'%'/'%25'}"
-                  CONTENT="${CONTENT//$'\n'/'%0A'}"
-                  CONTENT="${CONTENT//$'\r'/'%0D'}"
-                  echo "::warning::$CONTENT"
-                fi
+                  set +e
+                  ./build/Debug/rtsan_demo.exe > output.txt 2>&1
+                  EXIT_CODE=$?
+                  cat output.txt
+                  if [ $EXIT_CODE -ne 0 ]; then
+                    CONTENT=$(cat output.txt)
+                    CONTENT="${CONTENT//'%'/'%25'}"
+                    CONTENT="${CONTENT//$'\n'/'%0A'}"
+                    CONTENT="${CONTENT//$'\r'/'%0D'}"
+                    echo "::warning::$CONTENT"
+                  fi
