@@ -16,5 +16,7 @@ target_link_libraries(rtsan_standalone INTERFACE
 if(PROJECT_IS_TOP_LEVEL)
     add_executable(rtsan_demo rtsan_demo.cc)
     target_link_libraries(rtsan_demo PRIVATE rtsan_standalone)
-    target_compile_definitions(rtsan_demo PRIVATE __SANITIZE_REALTIME)
+    if(NOT WIN32)
+        target_compile_definitions(rtsan_demo PRIVATE __SANITIZE_REALTIME)
+    endif()
 endif()
