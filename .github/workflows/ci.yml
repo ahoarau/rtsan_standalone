@@ -3,68 +3,70 @@ name: CI
 on: push
 
 jobs:
-  linux:
-    name: Linux x64
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+    linux:
+        name: ${{ matrix.name }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-24.04
+                      name: Ubuntu 24.04 (x86_64)
 
-    - run: cmake -B build
-    - run: cmake --build build
+                    - os: ubuntu-24.04-arm
+                      name: Ubuntu 24.04 (ARM64)
+        steps:
+            - uses: actions/checkout@v4
+            - run: cmake -B build
+            - run: cmake --build build
+            - run: ./build/rtsan_demo
 
-    - name: Test
-      run: ./build/rtsan_demo
+    linux_cross_compile:
+        name: Linux x64 -> ARM64 (Cross)
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
 
-  linux_cross_compile:
-    name: Linux x64 -> ARM64 (Cross)
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
+            - name: Install Linux ARM64 Toolchain
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
-    - name: Install Linux ARM64 Toolchain
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+            - run: cmake -B build -DCMAKE_SYSTEM_PROCESSOR=aarch64 -DCMAKE_C_COMPILER_TARGET=aarch64-linux-gnu -DCMAKE_CXX_COMPILER_TARGET=aarch64-linux-gnu
+            - run: cmake --build build
+            - run: qemu-aarch64 ./build/rtsan_demo
 
-    - name: Configure CMake
-      run: |
-        cmake -B build -DCMAKE_SYSTEM_PROCESSOR=aarch64 -DCMAKE_C_COMPILER_TARGET=aarch64-linux-gnu -DCMAKE_CXX_COMPILER_TARGET=aarch64-linux-gnu
+    macos:
+        name: ${{ matrix.name }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: macos-15-intel
+                      name: macOS 15 (x86_64)
 
-    - name: Build
-      run: cmake --build build
+                    - os: macos-26
+                      name: macOS 26 (arm64)
+        steps:
+            - uses: actions/checkout@v4
+            - run: cmake -B build
+            - run: cmake --build build
+            - run: ./build/rtsan_demo
 
-    - name: Test
-      run: qemu-aarch64 ./build/rtsan_demo
-
-  macos:
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-15-intel
-            name: macOS 15 (x86_64)
-
-          - os: macos-26
-            name: macOS 26 (arm64)
-    steps:
-    - uses: actions/checkout@v4
-
-    - run: cmake -B build
-    - run: cmake --build build
-
-    - name: Test
-      run: ./build/rtsan_demo
-
-  windows:
-    name: Windows x64
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    - run: cmake -B build
-    - run: cmake --build build
-
-    - name: Test
-      run: .\build\rtsan_demo
+    windows_x64:
+        name: Windows x64
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v4
+            - run: cmake -B build
+            - run: cmake --build build
+            - run: ./build/Debug/rtsan_demo
+    windows_arm64:
+        name: Windows ARM64
+        runs-on: windows-11-arm
+        steps:
+            - uses: actions/checkout@v4
+            - run: cmake -B build
+            - run: cmake --build build
+            - run: ./build/Debug/rtsan_demo
