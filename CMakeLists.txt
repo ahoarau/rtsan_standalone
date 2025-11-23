@@ -23,7 +23,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/linux/libclang_rt.rtsan_linux_${CMAKE_SYSTEM_PROCESSOR}.a
     )
 else()
-    add_library(rtsan::rtsan_standalone UNKNOWN IMPORTED GLOBAL)
+    add_library(rtsan::rtsan_standalone INTERFACE IMPORTED GLOBAL)
+    target_include_directories(rtsan::rtsan_standalone INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     message(WARNING "
         CMAKE_SYSTEM_NAME:${CMAKE_SYSTEM_NAME}
         CMAKE_SYSTEM_PROCESSOR:${CMAKE_SYSTEM_PROCESSOR} 
